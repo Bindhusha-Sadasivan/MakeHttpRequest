@@ -15,7 +15,9 @@ export class AppComponent {
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.onFetchPosts()
+  }
 
   onCreatePost(postData: { title: string; content: string }) {
     // Send Http request
@@ -27,6 +29,9 @@ export class AppComponent {
 
   onFetchPosts() {
     // Send Http request
+    this.http.get('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json').subscribe(
+      posts => console.log(posts)
+    )
   }
 
   onClearPosts() {
