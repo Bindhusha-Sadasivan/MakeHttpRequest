@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,7 @@ export class AppComponent {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.onFetchPosts()
+    this.onFetchPosts();
   }
 
   onCreatePost(postData: { title: string; content: string }) {
@@ -29,7 +30,23 @@ export class AppComponent {
 
   onFetchPosts() {
     // Send Http request
-    this.http.get('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json').subscribe(
+    this.http.get('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json')
+    .pipe(
+      map(
+        responseData => {
+          const receivedData:any=[];
+          for(let data in responseData)
+          {
+            if(responseData.hasOwnProperty(data))
+            {
+              receivedData.push({...responseData, id:data})
+            }
+          }
+        }
+      )
+    )
+
+    .subscribe(
       posts => console.log(posts)
     )
   }
