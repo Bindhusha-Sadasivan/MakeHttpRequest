@@ -15,6 +15,8 @@ import { CommonModule } from '@angular/common';
 })
 export class AppComponent {
   loadedPosts:Post[]= [];
+  isFetching:boolean = false;
+
 
   constructor(private http: HttpClient) {}
 
@@ -32,6 +34,7 @@ export class AppComponent {
 
   onFetchPosts() {
     // Send Http request
+    this.isFetching = true;
     this.http.get<{[key:string] : Post}>('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json')
     .pipe(
       map(
@@ -50,6 +53,7 @@ export class AppComponent {
     )
     .subscribe(
       posts => {
+      this.isFetching = false
         console.log(posts);
         console.log(posts[0].content);
         console.log(posts[0].title);
