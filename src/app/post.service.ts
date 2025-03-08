@@ -12,13 +12,11 @@ export class PostService {
 
   createAndStorePost(title:string, content:string){
     const postDatas = {title : title, content:content};
-    this.http.post('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json', postDatas).subscribe(
-      responseData => console.log(responseData)
-    )
+    return this.http.post('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json', postDatas);
   }
 
   fetchPost(){
-    this.http.get<{[key:string] : Post}>('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json')
+    return this.http.get<{[key:string] : Post}>('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json')
     .pipe(
       map(
         (responseData) => {
@@ -34,10 +32,6 @@ export class PostService {
         }
       )
     )
-    .subscribe(
-      posts => {
 
-      }
-    )
   }
 }

@@ -25,17 +25,22 @@ export class AppComponent {
     this.onFetchPosts();
   }
 
-  onCreatePost(postData: Post) {
+  onCreatePost(postData: Post):any {
     // Send Http request
     console.log(postData);
-    this.postService.createAndStorePost(postData.title, postData.content)
-
+    this.postService.createAndStorePost(postData.title, postData.content).subscribe(
+      (responseData:any) => console.log(responseData))
   }
 
   onFetchPosts() {
     // Send Http request
     this.isFetching = true;
-    this.postService.fetchPost();
+    this.postService.fetchPost().subscribe(
+      posts => {
+        this.isFetching = false;
+        this.loadedPosts = posts;
+      }
+    );
 
   }
 
