@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { map } from 'rxjs';
+import { Post } from './post.model';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,7 @@ export class AppComponent {
     this.onFetchPosts();
   }
 
-  onCreatePost(postData: { title: string; content: string }) {
+  onCreatePost(postData: Post) {
     // Send Http request
     console.log(postData);
     this.http.post('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json', postData).subscribe(
@@ -30,24 +31,30 @@ export class AppComponent {
 
   onFetchPosts() {
     // Send Http request
-    this.http.get('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json')
+    this.http.get<{[key:string] : Post}>('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json')
     .pipe(
       map(
-        responseData => {
-          const receivedData:any=[];
+        (responseData) => {
+          const receivedData:Post[]=[];
           for(let data in responseData)
           {
             if(responseData.hasOwnProperty(data))
             {
-              receivedData.push({...responseData, id:data})
+              receivedData.push({...responseData[data], id:data})
             }
           }
+          return receivedData;
         }
       )
     )
 
     .subscribe(
-      posts => console.log(posts)
+      posts => {
+        console.log(posts);
+        console.log(posts[0].content);
+        console.log(posts[0].title);
+        console.log(posts[0].id);
+      }
     )
   }
 
