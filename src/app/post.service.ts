@@ -1,18 +1,27 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Post } from './post.model';
-import { map } from 'rxjs';
+import { map, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostService {
 
+  error = new Subject<string>();
+
   constructor(private http:HttpClient) { }
+
+  // createAndStorePost(title:string, content:string){
+  //   const postDatas = {title : title, content:content};
+  //   return this.http.post('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json', postDatas);
+  // }
 
   createAndStorePost(title:string, content:string){
     const postDatas = {title : title, content:content};
-    return this.http.post('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json', postDatas);
+    return this.http.post('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json', postDatas)
+    .subscribe(responseData => {console.log(responseData)},
+              error => { this.error.next(error.message)});
   }
 
   fetchPost(){

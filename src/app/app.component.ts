@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
-import { map } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { Post } from './post.model';
 import { CommonModule } from '@angular/common';
 import { PostService } from './post.service';
@@ -14,23 +14,28 @@ import { PostService } from './post.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy{
   loadedPosts:Post[]= [];
   isFetching:boolean = false;
   error:any=null;
+  errorSubscription!:Subscription;
 
 
   constructor(private http: HttpClient, private postService:PostService) {}
 
   ngOnInit() {
+    this.errorSubscription = this.postService.error.subscribe(
+      errorMessage => this.error = errorMessage
+    )
     this.onFetchPosts();
   }
 
   onCreatePost(postData: Post):any {
     // Send Http request
     console.log(postData);
-    this.postService.createAndStorePost(postData.title, postData.content).subscribe(
-      (responseData:any) => console.log(responseData))
+    // this.postService.createAndStorePost(postData.title, postData.content).subscribe(
+    //   (responseData:any) => console.log(responseData));
+    this.postService.createAndStorePost(postData.title, postData.content);
   }
 
   onFetchPosts() {
@@ -53,6 +58,12 @@ export class AppComponent {
     this.postService.deletePost().subscribe(() => {
       this.loadedPosts = [];
     })
+  }
+
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.errorSubscription.unsubscribe();
   }
 }
 
