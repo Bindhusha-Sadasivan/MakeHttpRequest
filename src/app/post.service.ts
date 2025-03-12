@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Post } from './post.model';
-import { map, Subject } from 'rxjs';
+import { catchError, map, Subject, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +39,8 @@ export class PostService {
           }
           return receivedData;
         }
-      )
+      ),
+      catchError(errorResponse => {return throwError(errorResponse)})
     )
 
   }
