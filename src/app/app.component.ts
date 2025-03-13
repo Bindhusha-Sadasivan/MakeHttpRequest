@@ -27,7 +27,18 @@ export class AppComponent implements OnInit, OnDestroy{
     this.errorSubscription = this.postService.error.subscribe(
       errorMessage => this.error = errorMessage
     )
-    this.onFetchPosts();
+    // this.onFetchPosts();
+    this.isFetching = true;
+    this.postService.fetchPost().subscribe(
+      posts => {
+        this.isFetching = false;
+        this.loadedPosts = posts;
+      },
+      error => {
+        this.isFetching = false
+        this.error = error.message;
+      }
+    );
   }
 
   onCreatePost(postData: Post):any {
@@ -47,6 +58,7 @@ export class AppComponent implements OnInit, OnDestroy{
         this.loadedPosts = posts;
       },
       error => {
+        this.isFetching = false
         this.error = error.message;
       }
     );
@@ -64,6 +76,10 @@ export class AppComponent implements OnInit, OnDestroy{
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.
     this.errorSubscription.unsubscribe();
+  }
+
+  onHandleError(){
+    this.error = null;
   }
 }
 
