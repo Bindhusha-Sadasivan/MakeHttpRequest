@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Post } from './post.model';
-import { catchError, map, Subject, throwError } from 'rxjs';
+import { catchError, map, Subject, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,11 @@ export class PostService {
 
   createAndStorePost(title:string, content:string){
     const postDatas = {title : title, content:content};
-    return this.http.post('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json', postDatas)
+    return this.http.post('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json', postDatas,
+      {
+        observe:'response'
+      }
+    )
     .subscribe(responseData => {console.log(responseData)},
               error => { this.error.next(error.message)});
   }
@@ -58,7 +62,11 @@ export class PostService {
   }
 
   deletePost(){
-    return this.http.delete('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json');
+    return this.http.delete('https://ng-recipies-web-api-default-rtdb.firebaseio.com/post.json',
+      {
+        observe:'events'
+      }
+    ).pipe(tap((event:any) => console.log(event)));
   }
 }
 
