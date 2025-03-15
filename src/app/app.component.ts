@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
@@ -6,11 +6,19 @@ import { map, Subscription } from 'rxjs';
 import { Post } from './post.model';
 import { CommonModule } from '@angular/common';
 import { PostService } from './post.service';
+import { authInterceptor } from './auth.interceptor';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, FormsModule, CommonModule],
+  providers:[
+    {
+      provide: HTTP_INTERCEPTORS,
+      useValue: authInterceptor,
+      multi: true
+    }
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
