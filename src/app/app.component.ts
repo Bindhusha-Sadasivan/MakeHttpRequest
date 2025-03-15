@@ -12,44 +12,37 @@ import { authInterceptor } from './auth.interceptor';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, FormsModule, CommonModule],
-  providers:[
-    {
-      provide: HTTP_INTERCEPTORS,
-      useValue: authInterceptor,
-      multi: true
-    }
-  ],
+  providers: [],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
-export class AppComponent implements OnInit, OnDestroy{
-  loadedPosts:Post[]= [];
-  isFetching:boolean = false;
-  error:any=null;
-  errorSubscription!:Subscription;
+export class AppComponent implements OnInit, OnDestroy {
+  loadedPosts: Post[] = [];
+  isFetching: boolean = false;
+  error: any = null;
+  errorSubscription!: Subscription;
 
-
-  constructor(private http: HttpClient, private postService:PostService) {}
+  constructor(private http: HttpClient, private postService: PostService) {}
 
   ngOnInit() {
     this.errorSubscription = this.postService.error.subscribe(
-      errorMessage => this.error = errorMessage
-    )
+      (errorMessage) => (this.error = errorMessage)
+    );
     // this.onFetchPosts();
     this.isFetching = true;
     this.postService.fetchPost().subscribe(
-      posts => {
+      (posts) => {
         this.isFetching = false;
         this.loadedPosts = posts;
       },
-      error => {
-        this.isFetching = false
+      (error) => {
+        this.isFetching = false;
         this.error = error.message;
       }
     );
   }
 
-  onCreatePost(postData: Post):any {
+  onCreatePost(postData: Post): any {
     // Send Http request
     console.log(postData);
     // this.postService.createAndStorePost(postData.title, postData.content).subscribe(
@@ -61,23 +54,22 @@ export class AppComponent implements OnInit, OnDestroy{
     // Send Http request
     this.isFetching = true;
     this.postService.fetchPost().subscribe(
-      posts => {
+      (posts) => {
         this.isFetching = false;
         this.loadedPosts = posts;
       },
-      error => {
-        this.isFetching = false
+      (error) => {
+        this.isFetching = false;
         this.error = error.message;
       }
     );
-
   }
 
   onClearPosts() {
     // Send Http request
     this.postService.deletePost().subscribe(() => {
       this.loadedPosts = [];
-    })
+    });
   }
 
   ngOnDestroy(): void {
@@ -86,7 +78,7 @@ export class AppComponent implements OnInit, OnDestroy{
     this.errorSubscription.unsubscribe();
   }
 
-  onHandleError(){
+  onHandleError() {
     this.error = null;
   }
 }
